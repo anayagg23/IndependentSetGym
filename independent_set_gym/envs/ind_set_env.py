@@ -8,14 +8,15 @@ import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
 import timeit
+import time
 
 # 1. modify independent variables: reward system and algorithm (PPO -> X)
 # 2. work for random graphs CHECK
 # 3. curve fit results for mathematical comparison, not just visual with tensorboard
 
-n = 35
+n = 20
 r_graph = nx.fast_gnp_random_graph(n, 0.5)
-n_iter = 100
+n_iter = int(2.5*n)
 
 class ind_set(gym.Env):
     def __init__(self, graph):
@@ -102,12 +103,25 @@ print(f"Cumulative Time = {cumulative_time}")
 
 #onto the testing phase
 
-game = ind_set(r_graph)
-
 for i in range(10):
-    game.evaluate(algo)
+  game = ind_set(r_graph)
+  game.reset()
 
-print("All finished.")
+  done = False
+  obs = game.state
+
+  start_time = time.time()
+
+  while not done:
+    action = algo.compute_single_action(obs)
+    obs, reward, done, info = game.step(action)
+
+  end_time = time.time()
+
+  total_time = end_time-start_time
+
+  print("Total time to beat the game: {:.2f} seconds".format(total_time))
+
 
 
 
