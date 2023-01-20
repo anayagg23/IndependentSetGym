@@ -14,12 +14,13 @@ import time
 # 2. work for random graphs CHECK
 # 3. curve fit results for mathematical comparison, not just visual with tensorboard
 
-n = 20
+n = 50
 r_graph = nx.fast_gnp_random_graph(n, 0.5)
-n_iter = int(2.5*n)
+n_iter = 100
 
 class ind_set(gym.Env):
     def __init__(self, graph):
+        self._max_episode_steps=100
         self.graph = nx.fast_gnp_random_graph(n, 0.5)
         self.max_size = len(clique.maximum_independent_set(self.graph))
         self.state = []
