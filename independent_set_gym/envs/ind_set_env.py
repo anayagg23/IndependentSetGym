@@ -17,7 +17,7 @@ import time
 n = 50
 r_graph = nx.fast_gnp_random_graph(n, 0.5)
 n_iter = 100
-p = 2*np.log(n)/n
+p = 2*np.log(n)/n # as n->inf, G(n,p) is connected with probability 1
 
 class ind_set(gym.Env):
     def __init__(self, graph):
