@@ -24,4 +24,6 @@ for i in range(10, 100):
 
 
 plt.plot(x,y,'ro')
+plt.xlabel('Number of Vertices')
+plt.ylabel('Avg. Computation Time (s)')
 plt.show()
