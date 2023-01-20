@@ -1,16 +1,27 @@
 import networkx as nx
 import time
 from networkx.algorithms.approximation import clique
+import numpy as np
+import matplotlib.pyplot as plt
 
-n = 20
-p = 0.5
 n_iter = 10
 
-start_time = time.time()
+def compute(n):
+  p = 2*np.log(n)/n
+  start_time = time.time()
+  for i in range(n_iter):
+    g = nx.fast_gnp_random_graph(n,p)
+    t = len(clique.maximum_independent_set(g))
+  end_time = time.time()
+  return (end_time-start_time)/10
 
-for i in range(n_iter):
-  g = nx.fast_gnp_random_graph(n, p)
-  t = len(clique.maximum_independent_set(g))
+x = []
+y = []
 
-end_time = time.time()
-print(end_time-start_time)
+for i in range(10, 100):
+  x.append(i)
+  y.append(compute(i))
+
+
+plt.plot(x,y,'ro')
+plt.show()
