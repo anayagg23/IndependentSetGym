@@ -17,11 +17,12 @@ import time
 n = 50
 r_graph = nx.fast_gnp_random_graph(n, 0.5)
 n_iter = 100
+p = 2*np.log(n)/n
 
 class ind_set(gym.Env):
     def __init__(self, graph):
         self._max_episode_steps=100
-        self.graph = nx.fast_gnp_random_graph(n, 0.5)
+        self.graph = nx.fast_gnp_random_graph(n,p)
         self.max_size = len(clique.maximum_independent_set(self.graph))
         self.state = []
         for i in range(len(self.graph.nodes)):
