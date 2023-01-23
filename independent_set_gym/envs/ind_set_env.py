@@ -7,22 +7,21 @@ import argparse
 import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
+from ray.rllib.algorithms.dqn.dqn import DQNConfig
 import timeit
 import time
 
-# 1. modify independent variables: reward system and algorithm (PPO -> X)
-# 2. work for random graphs CHECK
-# 3. curve fit results for mathematical comparison, not just visual with tensorboard
 
 n = 50
-r_graph = nx.fast_gnp_random_graph(n, 0.5)
-n_iter = 100
-p = 2*np.log(n)/n # as n->inf, G(n,p) is connected with probability 1
+r_graph = nx.dodecahedral_graph() # placeholder graph
+n_iter = 125
+p1 = 2*np.log(n)/n # as n->inf, G(n,p1) is connected with probability 1
+p = 0.5 # regular distribution (note p>p1 for all n>8)
 
 class ind_set(gym.Env):
     def __init__(self, graph):
-        self._max_episode_steps=100
-        self.graph = nx.fast_gnp_random_graph(n,p)
+        self._max_episode_steps=200
+        self.graph = nx.fast_gnp_random_graph(n,p) # regular distribution Erdos-Renyi Graph Generation - Fast Algorithm
         self.max_size = len(clique.maximum_independent_set(self.graph))
         self.state = []
         for i in range(len(self.graph.nodes)):
@@ -75,6 +74,8 @@ class ind_set(gym.Env):
         print("Resultant Redundancy:", 1/reward, " Resultant Reward:", reward)
 
 
+#PPO CONFIG
+#__________
 config = (
       PPOConfig()
       .environment(
@@ -86,6 +87,20 @@ config = (
       .rollouts(num_rollout_workers=3)
 )
 
+'''
+DQN Config
+__________
+config = (
+    DQNConfig()
+    .environment(
+      env = ind_set,
+      env_config = {
+            "graph": r_graph
+      },
+    )
+    .rollouts(num_rollout_workers=3)
+)
+'''
 algo = config.build()
 
 cumulative_time = 0
@@ -102,9 +117,9 @@ for i in range(num_iterations):
 
 print(f"Cumulative Time = {cumulative_time}")
 
-
-#onto the testing phase
-
+'''
+TESTING
+________
 for i in range(10):
   game = ind_set(r_graph)
   game.reset()
@@ -124,10 +139,12 @@ for i in range(10):
 
   print("Total time to beat the game: {:.2f} seconds".format(total_time))
 
-
+'''
 
 
 '''
+ALPHAZERO CONFIG & EXECUTION -- Different setup than modern algorithms, Alphazero has been deprecated in Ray v2
+_______________
 def env_creator(env_config):
     return ind_set(env_config["graph"])
 
