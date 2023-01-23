@@ -8,13 +8,14 @@ import ray
 from ray import tune
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
+from ray.rllib.algorithms.pg import PGConfig
 import timeit
 import time
 
 
-n = 50
+n = 20
 r_graph = nx.dodecahedral_graph() # placeholder graph
-n_iter = 125
+n_iter = 1000
 p1 = 2*np.log(n)/n # as n->inf, G(n,p1) is connected with probability 1
 p = 0.5 # regular distribution (note p>p1 for all n>8)
 
@@ -73,15 +74,30 @@ class ind_set(gym.Env):
             obs, reward, done, info = self.step(action)
         print("Resultant Redundancy:", 1/reward, " Resultant Reward:", reward)
 
-
-#PPO CONFIG
-#__________
+'''
+PPO CONFIG
+__________
 config = (
       PPOConfig()
       .environment(
           env = ind_set,
           env_config = {
                 "graph": r_graph
+          },
+      )
+      .rollouts(num_rollout_workers=3)
+)
+'''
+
+# PG CONFIG
+# _________
+config = (
+      PGConfig()
+      .training(lr=0.01)
+      .environment(
+          env = ind_set,
+          env_config = {
+                 "graph": r_graph
           },
       )
       .rollouts(num_rollout_workers=3)
