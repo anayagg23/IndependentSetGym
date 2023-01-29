@@ -1,0 +1,64 @@
+Failure # 1 (occurred at 2022-12-26_18-43-20)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/ray/tune/ray_trial_executor.py", line 934, in get_next_executor_event
+    future_result = ray.get(ready_future)
+  File "/usr/local/lib/python3.8/dist-packages/ray/_private/client_mode_hook.py", line 105, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/ray/worker.py", line 1833, in get
+    raise value
+ray.exceptions.RayActorError: The actor died because of an error raised in its creation task, [36mray::PPOTrainer.__init__()[39m (pid=8267, ip=192.168.1.49, repr=PPOTrainer)
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 1074, in _init
+    raise NotImplementedError
+NotImplementedError
+
+During handling of the above exception, another exception occurred:
+
+[36mray::PPOTrainer.__init__()[39m (pid=8267, ip=192.168.1.49, repr=PPOTrainer)
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 870, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.8/dist-packages/ray/tune/trainable.py", line 156, in __init__
+    self.setup(copy.deepcopy(self.config))
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 950, in setup
+    self.workers = WorkerSet(
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/evaluation/worker_set.py", line 142, in __init__
+    remote_spaces = ray.get(
+ray.exceptions.RayActorError: The actor died because of an error raised in its creation task, [36mray::RolloutWorker.__init__()[39m (pid=8301, ip=192.168.1.49, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x7f8c15152c70>)
+KeyError: 'IndependentSet-v0'
+
+During handling of the above exception, another exception occurred:
+
+[36mray::RolloutWorker.__init__()[39m (pid=8301, ip=192.168.1.49, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x7f8c15152c70>)
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/env/utils.py", line 54, in gym_env_creator
+    return gym.make(env_descriptor, **env_context)
+  File "/home/anay/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 235, in make
+    return registry.make(id, **kwargs)
+  File "/home/anay/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 128, in make
+    spec = self.spec(path)
+  File "/home/anay/.local/lib/python3.8/site-packages/gym/envs/registration.py", line 203, in spec
+    raise error.UnregisteredEnv("No registered env with id: {}".format(id))
+gym.error.UnregisteredEnv: No registered env with id: IndependentSet-v0
+
+During handling of the above exception, another exception occurred:
+
+[36mray::RolloutWorker.__init__()[39m (pid=8301, ip=192.168.1.49, repr=<ray.rllib.evaluation.rollout_worker.RolloutWorker object at 0x7f8c15152c70>)
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/evaluation/rollout_worker.py", line 506, in __init__
+    self.env = env_creator(copy.deepcopy(self.env_context))
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/env/utils.py", line 56, in gym_env_creator
+    raise EnvError(ERR_MSG_INVALID_ENV_DESCRIPTOR.format(env_descriptor))
+ray.rllib.utils.error.EnvError: The env string you provided ('IndependentSet-v0') is:
+a) Not a supported/installed environment.
+b) Not a tune-registered environment creator.
+c) Not a valid env class string.
+
+Try one of the following:
+a) For Atari support: `pip install gym[atari] autorom[accept-rom-license]`.
+   For VizDoom support: Install VizDoom
+   (https://github.com/mwydmuch/ViZDoom/blob/master/doc/Building.md) and
+   `pip install vizdoomgym`.
+   For PyBullet support: `pip install pybullet`.
+b) To register your custom env, do `from ray import tune;
+   tune.register('[name]', lambda cfg: [return env obj from here using cfg])`.
+   Then in your config, do `config['env'] = [name]`.
+c) Make sure you provide a fully qualified classpath, e.g.:
+   `ray.rllib.examples.env.repeat_after_me_env.RepeatAfterMeEnv`
+

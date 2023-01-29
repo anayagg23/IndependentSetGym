@@ -6,16 +6,19 @@ import matplotlib.pyplot as plt
 import argparse
 import ray
 from ray import tune
+from ray import air
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
 from ray.rllib.algorithms.pg import PGConfig
+from ray.rllib.algorithms.appo import APPOConfig
+from ray.rllib.algorithms.impala import ImpalaConfig
 import timeit
 import time
 
 
 n = 20
 r_graph = nx.dodecahedral_graph() # placeholder graph
-n_iter = 1000
+n_iter = 50
 p1 = 2*np.log(n)/n # as n->inf, G(n,p1) is connected with probability 1
 p = 0.5 # regular distribution (note p>p1 for all n>8)
 
@@ -75,8 +78,38 @@ class ind_set(gym.Env):
         print("Resultant Redundancy:", 1/reward, " Resultant Reward:", reward)
 
 '''
-PPO CONFIG
-__________
+APPO CONFIG
+___________
+config = (
+      APPOConfig()
+      .training(lr=0.01)
+      .environment(
+          env = ind_set,
+          env_config = {
+                "graph": r_graph
+          },
+       )
+       .rollouts(num_rollout_workers=3)
+)
+'''
+'''
+IMPALA CONFIG
+_____________
+config = (
+      APPOConfig()
+      .training(lr=0.0003)
+      .environment(
+          env = ind_set,
+          env_config = {
+                "graph": r_graph
+          },
+       )
+       .rollouts(num_rollout_workers=3)
+)
+'''
+
+#PPO CONFIG
+#__________
 config = (
       PPOConfig()
       .environment(
@@ -87,10 +120,10 @@ config = (
       )
       .rollouts(num_rollout_workers=3)
 )
-'''
 
-# PG CONFIG
-# _________
+'''
+ PG CONFIG
+ _________
 config = (
       PGConfig()
       .training(lr=0.01)
@@ -102,7 +135,7 @@ config = (
       )
       .rollouts(num_rollout_workers=3)
 )
-
+'''
 '''
 DQN Config
 __________
@@ -117,6 +150,16 @@ config = (
     .rollouts(num_rollout_workers=3)
 )
 '''
+'''
+TUNING
+______
+tune.Tuner(
+    "PPO",
+    run_config = air.RunConfig(stop={"episode_reward_mean": 10000}),
+    param_space = config.to_dict(),
+).fit()
+'''
+
 algo = config.build()
 
 cumulative_time = 0
@@ -133,9 +176,9 @@ for i in range(num_iterations):
 
 print(f"Cumulative Time = {cumulative_time}")
 
-'''
-TESTING
-________
+
+#TESTING
+#________
 for i in range(10):
   game = ind_set(r_graph)
   game.reset()
@@ -155,7 +198,6 @@ for i in range(10):
 
   print("Total time to beat the game: {:.2f} seconds".format(total_time))
 
-'''
 
 
 '''

@@ -1,0 +1,7 @@
+{
+  "env": "CartPole-v0",
+  "evaluation_interval": 2,
+  "evaluation_num_episodes": 20,
+  "num_cpus": 7,
+  "num_gpus": 0
+}

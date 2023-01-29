@@ -1,0 +1,19 @@
+Failure # 1 (occurred at 2022-12-26_18-46-48)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/ray/tune/ray_trial_executor.py", line 934, in get_next_executor_event
+    future_result = ray.get(ready_future)
+  File "/usr/local/lib/python3.8/dist-packages/ray/_private/client_mode_hook.py", line 105, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/ray/worker.py", line 1833, in get
+    raise value
+ray.exceptions.RayActorError: The actor died because of an error raised in its creation task, [36mray::PPOTrainer.__init__()[39m (pid=8572, ip=192.168.1.49, repr=PPOTrainer)
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 870, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.8/dist-packages/ray/tune/trainable.py", line 156, in __init__
+    self.setup(copy.deepcopy(self.config))
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 899, in setup
+    self.validate_config(self.config)
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/ppo/ppo.py", line 361, in validate_config
+    raise ValueError(
+ValueError: `sgd_minibatch_size` (128) must be <= `train_batch_size` (50).
+

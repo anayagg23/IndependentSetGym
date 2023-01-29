@@ -1,0 +1,21 @@
+Failure # 1 (occurred at 2022-12-26_18-56-34)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/ray/tune/ray_trial_executor.py", line 934, in get_next_executor_event
+    future_result = ray.get(ready_future)
+  File "/usr/local/lib/python3.8/dist-packages/ray/_private/client_mode_hook.py", line 105, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/ray/worker.py", line 1833, in get
+    raise value
+ray.exceptions.RayActorError: The actor died because of an error raised in its creation task, [36mray::PPOTrainer.__init__()[39m (pid=9445, ip=192.168.1.49, repr=PPOTrainer)
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 870, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.8/dist-packages/ray/tune/trainable.py", line 156, in __init__
+    self.setup(copy.deepcopy(self.config))
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 883, in setup
+    self.config = self.merge_trainer_configs(
+  File "/usr/local/lib/python3.8/dist-packages/ray/rllib/agents/trainer.py", line 2258, in merge_trainer_configs
+    return deep_update(
+  File "/usr/local/lib/python3.8/dist-packages/ray/util/ml_utils/dict.py", line 52, in deep_update
+    raise Exception("Unknown config parameter `{}` ".format(k))
+Exception: Unknown config parameter `num_cpus`
+

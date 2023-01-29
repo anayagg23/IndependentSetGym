@@ -1,0 +1,6 @@
+{
+  "env": "IndependentSet-v0",
+  "env_config": {
+    "graph": "Dodecahedral Graph"
+  }
+}

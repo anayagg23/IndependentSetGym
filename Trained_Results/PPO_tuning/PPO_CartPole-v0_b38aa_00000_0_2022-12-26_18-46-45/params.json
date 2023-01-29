@@ -1,0 +1,4 @@
+{
+  "env": "CartPole-v0",
+  "train_batch_size": 50
+}
